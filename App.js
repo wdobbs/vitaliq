@@ -1,17 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import { SafeAreaView, View, StyleSheet } from 'react-native';
+import { SafeAreaView, View, StyleSheet, Text } from 'react-native';
 import {
   Provider as PaperProvider,
-  Text,
   TextInput,
   Button,
   ActivityIndicator,
   Card,
-  DefaultTheme,
+  DefaultTheme
 } from 'react-native-paper';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import ChatScreen from './screens/ChatScreen';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -34,10 +34,10 @@ function WelcomeScreen({ navigation }) {
     <SafeAreaView style={styles.container}>
       <View style={styles.logoContainer}>
         <Text style={styles.logo}>🧠</Text>
-        <Text variant="headlineMedium">VitalIQ</Text>
+        <Text style={{ fontSize: 24, fontWeight: 'bold' }}>VitalIQ</Text>
       </View>
 
-      <Text variant="bodyMedium" style={styles.subtitle}>Your AI Health Assistant</Text>
+      <Text style={styles.subtitle}>Your AI Health Assistant</Text>
 
       <TextInput
         label="Name"
@@ -79,9 +79,9 @@ function ScanScreen({ route, navigation }) {
 
   return (
     <SafeAreaView style={styles.container}>
-      <Text variant="headlineLarge" style={styles.title}>🔬 Scanning...</Text>
+      <Text style={styles.title}>🔬 Scanning...</Text>
       <ActivityIndicator animating={true} size="large" style={{ marginVertical: 20 }} />
-      <Text variant="bodyMedium" style={styles.subtitle}>
+      <Text style={styles.subtitle}>
         Analyzing data for {name || 'User'}, age {age || '--'}
       </Text>
     </SafeAreaView>
@@ -89,38 +89,74 @@ function ScanScreen({ route, navigation }) {
 }
 
 // --- Screen 3: Results ---
-function ResultsScreen({ route }) {
+function ResultsScreen({ route, navigation }) {
   const { name, age } = route.params || {};
-
+  
+  
   return (
     <SafeAreaView style={styles.container}>
-      <Text variant="headlineLarge" style={styles.title}>Scan Results</Text>
+      <Text style={styles.title}>Scan Results</Text>
 
       <Card style={styles.card}>
         <Card.Content>
-          <Text variant="bodyMedium">🫀 Heart Rate: 72 bpm</Text>
-          <Text variant="bodyMedium">😴 Sleep Readiness: High</Text>
-          <Text variant="bodyMedium">😰 Stress Level: Moderate</Text>
+          <Text>🫀 Heart Rate: 72 bpm</Text>
+          <Text>😴 Sleep Readiness: High</Text>
+          <Text>😰 Stress Level: Moderate</Text>
         </Card.Content>
       </Card>
 
       <Card style={styles.card}>
         <Card.Content>
-          <Text variant="bodyMedium">👤 Name: {name || 'Anonymous'}</Text>
-          <Text variant="bodyMedium">🎂 Age: {age || '--'}</Text>
+          <Text>👤 Name: {name || 'Anonymous'}</Text>
+          <Text>🎂 Age: {age || '--'}</Text>
         </Card.Content>
       </Card>
+
+      <Button
+        mode="outlined"
+        onPress={() =>
+          navigation.navigate('Vee', {
+            scanResults: {
+              name,
+              age,
+              heartRate: 72,
+              sleep: 'High',
+              stress: 'Moderate'
+            }
+          })
+        }
+        style={{ marginTop: 12 }}
+      >
+        Chat with Vee
+      </Button>
     </SafeAreaView>
   );
 }
 
-// --- Tabs Navigator ---
+// --- Tab Navigator ---
 function MainTabs() {
   return (
     <Tab.Navigator screenOptions={{ headerShown: false }}>
-      <Tab.Screen name="Home" component={WelcomeScreen} options={{ tabBarIcon: () => <Text>🏠</Text> }} />
-      <Tab.Screen name="Scan" component={ScanScreen} options={{ tabBarIcon: () => <Text>🔬</Text> }} />
-      <Tab.Screen name="Results" component={ResultsScreen} options={{ tabBarIcon: () => <Text>📊</Text> }} />
+      <Tab.Screen
+        name="Welcome"
+        component={WelcomeScreen}
+        options={{ tabBarIcon: () => <Text>🏠</Text> }}
+      />
+      <Tab.Screen
+        name="Scan"
+        component={ScanScreen}
+        options={{ tabBarIcon: () => <Text>🔬</Text> }}
+      />
+      <Tab.Screen
+        name="Results"
+        component={ResultsScreen}
+        options={{ tabBarIcon: () => <Text>📊</Text> }}
+      />
+      <Tab.Screen
+        name="Vee"
+        component={ChatScreen}
+        options={{ tabBarIcon: () => <Text>💬</Text>, tabBarLabel: 'Vee' }}
+      />
     </Tab.Navigator>
   );
 }
@@ -149,6 +185,8 @@ const styles = StyleSheet.create({
   title: {
     textAlign: 'center',
     marginBottom: 12,
+    fontSize: 22,
+    fontWeight: 'bold',
   },
   subtitle: {
     textAlign: 'center',
@@ -160,10 +198,6 @@ const styles = StyleSheet.create({
   },
   button: {
     marginTop: 8,
-  },
-  result: {
-    marginBottom: 10,
-    textAlign: 'center',
   },
   card: {
     width: '100%',
